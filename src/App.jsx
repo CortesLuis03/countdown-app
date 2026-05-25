@@ -203,7 +203,7 @@ function App() {
         </div>
       )}
 
-      <button className="reset-btn" onClick={handleReset} title="Reiniciar">&times;</button>
+      {!envConfig && <button className="reset-btn" onClick={handleReset} title="Reiniciar">&times;</button>}
 
       <div className="countdown">
         <div className="time-unit">
