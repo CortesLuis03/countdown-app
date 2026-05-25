@@ -7,3 +7,9 @@ services:
     env_file:
       - .env
     restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.countdown.rule=Host(`countdown.dev-labenginnering.com`)"
+      - "traefik.http.routers.countdown.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.countdown.entrypoints=websecure"
+      - "traefik.http.services.countdown.loadbalancer.server.port=80"
