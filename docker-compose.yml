@@ -13,3 +13,6 @@ services:
       - "traefik.http.routers.countdown.tls.certresolver=letsencrypt"
       - "traefik.http.routers.countdown.entrypoints=websecure"
       - "traefik.http.services.countdown.loadbalancer.server.port=80"
+networks:
+  proxy:
+    external: true
