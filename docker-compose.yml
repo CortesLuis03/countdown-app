@@ -1,0 +1,9 @@
+services:
+  countdown:
+    build: .
+    container_name: countdown-app
+    ports:
+      - "9001:80"
+    env_file:
+      - .env
+    restart: unless-stopped
