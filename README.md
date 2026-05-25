@@ -4,7 +4,7 @@ Single page app con contador regresivo configurable, tema oscuro y celebraciones
 
 ## Captura
 
-![Preview](/shared_image.png)
+![Preview](/public/preview.png)
 
 ## Características
 
