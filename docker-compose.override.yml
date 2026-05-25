@@ -1,0 +1,8 @@
+services:
+  countdown:
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    name: proxy

@@ -44,6 +44,7 @@ function App() {
   const [celebrationLevel, setCelebrationLevel] = useState(0)
   const [expired, setExpired] = useState(false)
   const prevDaysRef = useRef(null)
+  const audioRef = useRef(null)
 
   const fireConfetti = useCallback((level) => {
     const colors = level === 1
@@ -128,6 +129,37 @@ function App() {
       return () => clearInterval(id)
     }
   }, [celebrationLevel, expired, fireConfetti])
+
+  useEffect(() => {
+    if (celebrationLevel < 3) return
+
+    if (!audioRef.current) {
+      audioRef.current = new Audio('/The%20Final%20Countdown.mp3')
+      audioRef.current.loop = true
+    }
+
+    const play = () => audioRef.current?.play().catch(() => {})
+
+    play()
+
+    const handleInteraction = () => {
+      play()
+      document.removeEventListener('click', handleInteraction)
+      document.removeEventListener('touchstart', handleInteraction)
+    }
+
+    document.addEventListener('click', handleInteraction)
+    document.addEventListener('touchstart', handleInteraction)
+
+    return () => {
+      document.removeEventListener('click', handleInteraction)
+      document.removeEventListener('touchstart', handleInteraction)
+      if (audioRef.current) {
+        audioRef.current.pause()
+        audioRef.current.currentTime = 0
+      }
+    }
+  }, [celebrationLevel])
 
   const handleStart = () => {
     if (!dateInput || !timeInput || !reasonInput.trim()) return
