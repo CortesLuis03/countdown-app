@@ -174,6 +174,17 @@ function App() {
     setShowConfig(false)
     setExpired(false)
     prevDaysRef.current = null
+
+    const now = new Date()
+    const diff = dt - now
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24))
+    if (diff > 0 && days <= 3) {
+      if (!audioRef.current) {
+        audioRef.current = new Audio('/The%20Final%20Countdown.mp3')
+        audioRef.current.loop = true
+      }
+      audioRef.current.play().catch(() => {})
+    }
   }
 
   const handleReset = () => {
