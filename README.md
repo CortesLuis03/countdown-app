@@ -37,7 +37,7 @@ npm run dev
 
 ```bash
 docker compose up -d
-# Abrir http://localhost:6000
+# Abrir http://localhost:9001
 ```
 
 ### Variables de entorno
