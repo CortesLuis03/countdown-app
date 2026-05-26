@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import confetti from 'canvas-confetti'
+import Fireworks from 'fireworks-js'
 
 function getEnvConfig() {
   if (typeof window !== 'undefined' && window.APP_CONFIG) {
@@ -47,6 +48,8 @@ function App() {
   const audioRef = useRef(null)
   const audioStartedRef = useRef(false)
   const [showAudioPrompt, setShowAudioPrompt] = useState(false)
+  const fireworksRef = useRef(null)
+  const containerRef = useRef(null)
 
   const fireConfetti = useCallback((level) => {
     const colors = level === 1
@@ -141,11 +144,38 @@ function App() {
       if (!audioStartedRef.current) {
         setShowAudioPrompt(true)
       }
+      if (containerRef.current && !fireworksRef.current) {
+        fireworksRef.current = new Fireworks(containerRef.current, {
+          particles: 36,
+          explosion: 4,
+          intensity: 2.4,
+          opacity: 0.72,
+          delay: { min: 16, max: 32 },
+          hue: { min: 0, max: 360 },
+          rocketsPoint: { min: 10, max: 90 },
+          mouse: { click: false, move: false, max: 1 },
+          traceLength: 2.4,
+          traceSpeed: 6,
+          flickering: 36,
+          lineWidth: { explosion: { min: 1.2, max: 2.4 }, trace: { min: 0.6, max: 1.2 } },
+          brightness: { min: 60, max: 96 },
+          decay: { min: 0.012, max: 0.024 },
+        })
+        fireworksRef.current.start()
+      }
     } else {
       setShowAudioPrompt(false)
+      if (fireworksRef.current) {
+        fireworksRef.current.stop()
+        fireworksRef.current = null
+      }
     }
 
     return () => {
+      if (fireworksRef.current) {
+        fireworksRef.current.stop()
+        fireworksRef.current = null
+      }
       if (audioRef.current) {
         audioRef.current.pause()
         audioRef.current.currentTime = 0
@@ -235,18 +265,7 @@ function App() {
   return (
     <div className={`app celebration-${celebrationLevel}${expired ? ' expired' : ''}`}>
       {(celebrationLevel >= 3) && (
-        <div className="happiness-animation">
-          {['🎉', '🎊', '✨', '💫', '🌟', '🎈', '❤️', '🥳', '⭐', '🌈'].map((emoji, i) => (
-            <span key={i} className="float-emoji" style={{
-              left: `${(i * 10) + Math.random() * 5}%`,
-              animationDelay: `${Math.random() * 5}s`,
-              animationDuration: `${3 + Math.random() * 5}s`,
-              fontSize: `${1.2 + Math.random() * 1.8}rem`,
-            }}>
-              {emoji}
-            </span>
-          ))}
-        </div>
+        <div ref={containerRef} className="happiness-animation" />
       )}
 
       {showAudioPrompt && (
