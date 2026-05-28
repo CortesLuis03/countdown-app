@@ -7,7 +7,7 @@ function getEnvConfig() {
     const c = window.APP_CONFIG
     if (c.targetDate && c.targetTime && c.reason) {
       const dt = new Date(`${c.targetDate}T${c.targetTime}`)
-      if (!isNaN(dt.getTime()) && dt > new Date()) {
+      if (!isNaN(dt.getTime())) {
         return { targetDate: dt, reason: c.reason }
       }
     }
@@ -56,7 +56,9 @@ function App() {
       ? ['#ffd700']
       : level === 2
         ? ['#ffd700', '#ff6b6b', '#ffa500']
-        : ['#ffd700', '#ff6b6b', '#ffa500', '#ff1493', '#00ff7f', '#00bfff']
+        : level === 3
+          ? ['#ffd700', '#ff6b6b', '#ffa500', '#ff1493', '#00ff7f', '#00bfff']
+          : ['#00bfff', '#87ceeb', '#4fc3f7', '#e0f7fa', '#ffd700', '#ff6b6b', '#ff1493', '#00ff7f']
 
     const defaults = {
       particleCount: 30 + level * 30,
@@ -75,6 +77,11 @@ function App() {
       setTimeout(() => confetti({ ...defaults, particleCount: 90, spread: 140, origin: { y: 0.3 } }), 300)
       setTimeout(() => confetti({ ...defaults, particleCount: 60, spread: 160, origin: { y: 0.5 } }), 600)
     }
+    if (level >= 4) {
+      setTimeout(() => confetti({ ...defaults, particleCount: 120, spread: 180, origin: { y: 0.2 } }), 100)
+      setTimeout(() => confetti({ ...defaults, particleCount: 80, spread: 200, origin: { y: 0.4 } }), 400)
+      setTimeout(() => confetti({ ...defaults, particleCount: 100, spread: 220, origin: { y: 0.7 } }), 700)
+    }
   }, [])
 
   useEffect(() => {
@@ -87,7 +94,7 @@ function App() {
       if (diff <= 0) {
         setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 })
         setExpired(true)
-        setCelebrationLevel(3)
+        setCelebrationLevel(4)
         return
       }
 
@@ -100,7 +107,7 @@ function App() {
 
       setTimeLeft({ days, hours, minutes, seconds })
 
-      const newLevel = days <= 3 ? 3 : days <= 7 ? 2 : days <= 10 ? 1 : 0
+      const newLevel = days <= 0 ? 4 : days <= 3 ? 3 : days <= 7 ? 2 : days <= 10 ? 1 : 0
       setCelebrationLevel(newLevel)
 
       if (prevDaysRef.current !== null) {
@@ -108,6 +115,7 @@ function App() {
         if (prev > 10 && days <= 10) fireConfetti(1)
         if (prev > 7 && days <= 7) fireConfetti(2)
         if (prev > 3 && days <= 3) fireConfetti(3)
+        if (prev > 0 && days <= 0) fireConfetti(4)
       }
       prevDaysRef.current = days
     }
@@ -125,7 +133,11 @@ function App() {
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (celebrationLevel >= 3 || expired) {
+    if (celebrationLevel >= 4 || expired) {
+      const id = setInterval(() => fireConfetti(4), 8000)
+      return () => clearInterval(id)
+    }
+    if (celebrationLevel >= 3) {
       const id = setInterval(() => fireConfetti(3), 10000)
       return () => clearInterval(id)
     }
@@ -145,21 +157,22 @@ function App() {
         setShowAudioPrompt(true)
       }
       if (containerRef.current && !fireworksRef.current) {
+        const isLastDay = celebrationLevel >= 4
         fireworksRef.current = new Fireworks(containerRef.current, {
-          particles: 36,
-          explosion: 4,
-          intensity: 2.4,
-          opacity: 0.72,
-          delay: { min: 16, max: 32 },
-          hue: { min: 0, max: 360 },
+          particles: isLastDay ? 90 : 60,
+          explosion: isLastDay ? 9 : 6,
+          intensity: isLastDay ? 5 : 3.5,
+          opacity: 0.85,
+          delay: { min: isLastDay ? 8 : 14, max: isLastDay ? 22 : 28 },
+          hue: { min: 180, max: 240 },
           rocketsPoint: { min: 10, max: 90 },
           mouse: { click: false, move: false, max: 1 },
-          traceLength: 2.4,
-          traceSpeed: 6,
-          flickering: 36,
-          lineWidth: { explosion: { min: 1.2, max: 2.4 }, trace: { min: 0.6, max: 1.2 } },
-          brightness: { min: 60, max: 96 },
-          decay: { min: 0.012, max: 0.024 },
+          traceLength: isLastDay ? 5 : 3.5,
+          traceSpeed: 5,
+          flickering: isLastDay ? 70 : 50,
+          lineWidth: { explosion: { min: 1.5, max: 3 }, trace: { min: 0.8, max: 1.5 } },
+          brightness: { min: 70, max: 100 },
+          decay: { min: isLastDay ? 0.006 : 0.008, max: isLastDay ? 0.012 : 0.016 },
         })
         fireworksRef.current.start()
       }
@@ -298,7 +311,7 @@ function App() {
         </div>
       </div>
 
-      <div className="reason">{reason}</div>
+      <div className="reason">{expired ? 'Gracias por todo' : reason}</div>
     </div>
   )
 }

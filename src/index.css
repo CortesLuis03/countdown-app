@@ -277,16 +277,76 @@ body::before {
   50% { transform: scale(1.04); }
 }
 
+/* ========= CELEBRATION LEVEL 4 (less than 1 day) ========= */
+
+.celebration-4 .time-unit {
+  border-color: rgba(0, 191, 255, 0.5);
+  box-shadow:
+    0 0 50px rgba(0, 191, 255, 0.2),
+    0 0 100px rgba(0, 191, 255, 0.08),
+    0 0 150px rgba(0, 191, 255, 0.04);
+  background: rgba(10, 18, 30, 0.85);
+}
+
+.celebration-4 .number {
+  color: #87ceeb;
+  text-shadow: 0 0 30px rgba(0, 191, 255, 0.4);
+  animation: glow-pulse-blue 1.2s ease-in-out infinite alternate;
+}
+
+.celebration-4 .reason {
+  color: #b0e0e6;
+}
+
+.celebration-4 .countdown {
+  animation: pulse-intense 1s ease-in-out infinite;
+}
+
+@keyframes pulse-intense {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+}
+
+@keyframes glow-pulse-blue {
+  from {
+    text-shadow: 0 0 15px rgba(0, 191, 255, 0.2);
+  }
+  to {
+    text-shadow:
+      0 0 35px rgba(0, 191, 255, 0.5),
+      0 0 80px rgba(0, 191, 255, 0.2);
+  }
+}
+
 /* ========= EXPIRED ========= */
 
-.expired .number {
+.expired:not(.celebration-4) .number {
   animation: glow-pulse 1s ease-in-out infinite alternate;
 }
 
-.expired .reason {
+.expired:not(.celebration-4) .reason {
   color: #ff6eb4;
+}
+
+.expired .reason {
   font-weight: 400;
   font-size: 1.2rem;
+}
+
+.celebration-4.expired .time-unit {
+  border-color: rgba(0, 191, 255, 0.7);
+  box-shadow:
+    0 0 60px rgba(0, 191, 255, 0.3),
+    0 0 120px rgba(0, 191, 255, 0.12),
+    0 0 200px rgba(0, 191, 255, 0.06);
+}
+
+.celebration-4.expired .number {
+  animation: glow-pulse-blue 0.8s ease-in-out infinite alternate;
+}
+
+.celebration-4.expired .reason {
+  color: #e0f7fa;
 }
 
 @keyframes glow-pulse {
