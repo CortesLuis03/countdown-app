@@ -50,6 +50,7 @@ function App() {
   const [showAudioPrompt, setShowAudioPrompt] = useState(false)
   const fireworksRef = useRef(null)
   const containerRef = useRef(null)
+  const currentSongRef = useRef(null)
 
   const fireConfetti = useCallback((level) => {
     const colors = level === 1
@@ -149,10 +150,26 @@ function App() {
 
   useEffect(() => {
     if (celebrationLevel >= 3) {
+      const songPath = celebrationLevel >= 4
+        ? '/Todo%20Tiene%20Su%20Final.mp3'
+        : '/The%20Final%20Countdown.mp3'
+
       if (!audioRef.current) {
-        audioRef.current = new Audio('/The%20Final%20Countdown.mp3')
+        audioRef.current = new Audio(songPath)
         audioRef.current.loop = true
+        currentSongRef.current = songPath
+      } else if (currentSongRef.current !== songPath) {
+        const wasPlaying = !audioRef.current.paused
+        audioRef.current.pause()
+        audioRef.current.src = songPath
+        audioRef.current.loop = true
+        audioRef.current.load()
+        if (wasPlaying) {
+          audioRef.current.play().catch(() => {})
+        }
+        currentSongRef.current = songPath
       }
+
       if (!audioStartedRef.current) {
         setShowAudioPrompt(true)
       }
@@ -222,9 +239,13 @@ function App() {
     const diff = dt - now
     const days = Math.floor(diff / (1000 * 60 * 60 * 24))
     if (diff > 0 && days <= 3) {
+      const songPath = days <= 0
+        ? '/Todo%20Tiene%20Su%20Final.mp3'
+        : '/The%20Final%20Countdown.mp3'
       if (!audioRef.current) {
-        audioRef.current = new Audio('/The%20Final%20Countdown.mp3')
+        audioRef.current = new Audio(songPath)
         audioRef.current.loop = true
+        currentSongRef.current = songPath
       }
       audioRef.current.play().catch(() => {})
       audioStartedRef.current = true
